@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banda — Programa de lateral</title>
+<meta name="description" content="Seguimiento personal de entrenamiento para jugar de lateral: rutina, progreso y estadísticas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="pitch-line" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="topbar__mark">
+    <span class="topbar__number">2</span>
+    <div class="topbar__id">
+      <strong>Programa de banda</strong>
+      <span>Fuerza, resistencia y técnica de lateral</span>
+    </div>
+  </div>
+  <nav class="topbar__nav">
+    <button class="navbtn is-active" data-view="hoy">Hoy</button>
+    <button class="navbtn" data-view="semana">Semana</button>
+    <button class="navbtn" data-view="stats">Estadísticas</button>
+    <button class="navbtn" data-view="ajustes">Ajustes</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HERO / TODAY -->
+  <section class="view" id="view-hoy">
+    <div class="hero">
+      <div class="hero__eta">
+        <span class="hero__eta-label">Fecha estimada de fin de programa</span>
+        <span class="hero__eta-value" id="etaDate">—</span>
+        <span class="hero__eta-sub" id="etaSub">Calculando según tu ritmo real…</span>
+      </div>
+      <div class="hero__streak">
+        <span class="hero__streak-value" id="streakValue">0</span>
+        <span class="hero__streak-label">días seguidos</span>
+      </div>
+    </div>
+
+    <div class="today-card" id="todayCard">
+      <div class="today-card__head">
+        <span class="today-card__day" id="todayDayLabel">—</span>
+        <h1 class="today-card__title" id="todayTitle">Sesión de hoy</h1>
+      </div>
+      <ul class="exercise-list" id="exerciseList"></ul>
+      <div class="today-card__foot">
+        <span id="todayProgressText">0 / 0 completados</span>
+        <button class="btn btn--ghost" id="skipBtn">No puedo entrenar hoy</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEEK GRID -->
+  <section class="view" id="view-semana" hidden>
+    <h1 class="view-title">Semana <span id="weekNumberLabel">1</span></h1>
+    <p class="view-sub">Marca cada entrenamiento completado. La casilla en blanco significa pendiente; una X gris indica que justificaste no poder entrenar.</p>
+    <div class="week-grid-wrap">
+      <table class="week-grid" id="weekGrid"></table>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="view" id="view-stats" hidden>
+    <h1 class="view-title">Estadísticas</h1>
+    <div class="stat-cards">
+      <div class="stat-card">
+        <span class="stat-card__value" id="statAdherence">0%</span>
+        <span class="stat-card__label">Adherencia total</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__value" id="statCompleted">0</span>
+        <span class="stat-card__label">Sesiones completadas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__value" id="statMissed">0</span>
+        <span class="stat-card__label">Sesiones no realizadas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__value" id="statBestStreak">0</span>
+        <span class="stat-card__label">Mejor racha</span>
+      </div>
+    </div>
+
+    <h2 class="view-subtitle">Adherencia por semana</h2>
+    <div class="chart-wrap" id="chartWeekly"></div>
+
+    <h2 class="view-subtitle">Historial de justificaciones</h2>
+    <ul class="reason-log" id="reasonLog">
+      <li class="reason-log__empty">Aún no has registrado ningún motivo.</li>
+    </ul>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="view" id="view-ajustes" hidden>
+    <h1 class="view-title">Ajustes</h1>
+
+    <div class="settings-block">
+      <h2 class="view-subtitle">Programa</h2>
+      <label class="field">
+        <span>Fecha de inicio</span>
+        <input type="date" id="startDateInput">
+      </label>
+      <label class="field">
+        <span>Duración del programa (semanas)</span>
+        <input type="number" id="programWeeksInput" min="1" max="52">
+      </label>
+      <button class="btn" id="saveSettingsBtn">Guardar</button>
+    </div>
+
+    <div class="settings-block">
+      <h2 class="view-subtitle">Datos</h2>
+      <p class="settings-note">Todo tu progreso se guarda únicamente en este navegador (localStorage). No se envía a ningún servidor.</p>
+      <div class="settings-actions">
+        <button class="btn btn--ghost" id="exportBtn">Exportar copia de seguridad (.json)</button>
+        <label class="btn btn--ghost file-btn">
+          Importar copia de seguridad
+          <input type="file" id="importInput" accept="application/json" hidden>
+        </label>
+        <button class="btn btn--danger" id="resetBtn">Borrar todo el progreso</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <h2 class="view-subtitle">Legal</h2>
+      <ul class="legal-links">
+        <li><a href="TERMS.md">Términos de uso</a></li>
+        <li><a href="PRIVACY.md">Política de privacidad</a></li>
+        <li><a href="LICENSE">Licencia del código</a></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<!-- SKIP / JUSTIFICATION MODAL -->
+<div class="modal" id="skipModal" hidden>
+  <div class="modal__box">
+    <h2>No puedo entrenar hoy porque…</h2>
+    <textarea id="skipReason" placeholder="Explica brevemente el motivo (lesión, trabajo, viaje...)" rows="4"></textarea>
+    <p class="modal__error" id="skipError" hidden>Escribe un motivo antes de guardar.</p>
+    <div class="modal__actions">
+      <button class="btn btn--ghost" id="skipCancel">Cancelar</button>
+      <button class="btn btn--danger" id="skipConfirm">Guardar y saltar hoy</button>
+    </div>
+  </div>
+</div>
+
+<footer class="sitefoot">
+  <p>Programa de banda · uso personal · <a href="TERMS.md">Términos</a> · <a href="PRIVACY.md">Privacidad</a> · <a href="LICENSE">Licencia</a></p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
